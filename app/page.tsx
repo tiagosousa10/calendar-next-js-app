@@ -7,7 +7,7 @@ import interactionPlugin, {
   DropArg,
 } from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface Event {
   title: string;
@@ -55,6 +55,23 @@ export default function Home() {
     id: 0,
   });
 
+  useEffect(() => {
+    let draggableEl = document.getElementById('draggable-el');
+
+    if (draggableEl) {
+      new Draggable(draggableEl, {
+        itemSelector: '.fc-event',
+        eventData: function (eventEl) {
+          let title = eventEl.getAttribute('title');
+          let id = eventEl.getAttribute('data');
+          let start = eventEl.getAttribute('start');
+
+          return { title, id, start };
+        },
+      });
+    }
+  }, []);
+
   return (
     <>
       <nav className="flex justify-baseline mb-12 border-b border-violet-100 p-4">
@@ -70,7 +87,7 @@ export default function Home() {
                 center: 'title',
                 right: 'resourceTimelineWook, dayGridMonth,timeGridWeek',
               }}
-              events={{}}
+              events={allEvents}
               nowIndicator={true}
               editable={true}
               droppable={true}
